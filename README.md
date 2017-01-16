@@ -1,0 +1,2 @@
+# testMavenSpringSecurity
+一个使用maven做的关于spring security得小demo
