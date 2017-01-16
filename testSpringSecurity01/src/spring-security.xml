@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/mvc 
+		http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+		http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+	<!-- 不需要保护的内容，全部写在最上面 -->
+	<security:http pattern="/index.jsp*" security="none" />
+	<security:http pattern="/login.jsp*" security="none" />
+	<security:http pattern="/*.css*" security="none" />
+	<security:http pattern="/*.js*" security="none" />
+	
+	<security:http auto-config='true'>
+		<security:intercept-url pattern="/user/*"
+			access="ROLE_USER" />
+		<security:intercept-url pattern="/admin/*"
+			access="ROLE_USER" />
+		<!-- 自定义登陆页面 login-page:登陆页面 login-processing-url：处理登陆请求的url路径 password-parameter:接受客户端参数所使用的名称 
+			default-target-url：用户登陆成功以后，默认的跳转路径 always-use-default-target:是否一直使用 默认成功的跳转路径 
+			authentication-failure-url: 认证失败的跳转路径 -->
+		<security:form-login login-page="/login2.jsp"
+			login-processing-url="/userLogin" password-parameter="password"
+			username-parameter="username" default-target-url="/loginOk.jsp"
+			always-use-default-target="true" authentication-failure-url="/loginError.jsp" />
+		<!-- 配置登陆退出的相关信息 logout-url: 退出的url请求路径 logout-success-url：退出成功后的跳转路径 invalidate-session：是否注销session -->
+		<security:logout logout-url="/loginOut"
+			logout-success-url="/login2.jsp" invalidate-session="true" />
+	</security:http>
+
+
+	<!-- 认证管理器：主要用来验证用户身份的合法性 -->
+	<security:authentication-manager>
+		<security:authentication-provider>
+			<security:user-service>
+				<security:user name="jimi" password="123"
+					authorities="ROLE_USER, ROLE_ADMIN" />
+				<security:user name="bob" password="123" authorities="ROLE_USER" />
+				<security:user name="zhangsan" password="123"
+					authorities="ROLE_ADMIN" />
+			</security:user-service>
+		</security:authentication-provider>
+	</security:authentication-manager>
+</beans>
